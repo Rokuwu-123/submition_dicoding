@@ -21,16 +21,16 @@ models = {
 
     data_buku : async(daftar_buku)=>{
 
-        let data_kembali = []
+        let data_kembali = [];
     
         daftar_buku.forEach(data => {
             vdata_buku = {
                 id : data.id,
                 name : data.name,
                 publisher : data.publisher
-            }
+            };
     
-            data_kembali.push(vdata_buku)
+            data_kembali.push(vdata_buku);
         });
     
         return data_kembali;
@@ -67,7 +67,7 @@ models = {
         daftar_buku.find((data, index)=>{
             if(data.id == parameter.id_buku){
                 delete daftar_buku[index]
-            }
+            };
         });
 
         return daftar_buku;

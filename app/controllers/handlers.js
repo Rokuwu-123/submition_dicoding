@@ -82,7 +82,7 @@ controller = {
             respons_code = 200;
             
         } catch (error) {
-            let error_message = {
+            let error_respons = {
                 "status" : "error",
                 "message" : "Buku gagal ditampilkan"
             };
@@ -133,7 +133,7 @@ controller = {
             respons_code = 200;
 
         } catch (error) {
-            let error_message = {
+            let error_respons = {
                 "status" : "error",
                 "message" : "Buku gagal diubah"
             };
@@ -151,8 +151,8 @@ controller = {
     },
 
     hapus_buku : async(request, h)=>{
-        let respons_code = '';
-        let respons_data = '';
+        let respons_code = "";
+        let respons_data = "";
 
         try {
 
@@ -180,7 +180,7 @@ controller = {
             respons_code = 200;
             
         } catch (error) {
-            let error_message = {
+            let error_respons = {
                 "status" : "error",
                 "message" : "Buku gagal dihapus"
             };

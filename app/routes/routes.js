@@ -15,6 +15,11 @@ routes = [
         method : 'PUT',
         path : '/books/{id_buku}',
         handler : controller.ubah_buku
+    },
+    {
+        method : 'DELETE',
+        path : '/books/{id_buku}',
+        handler : controller.hapus_buku
     }
 ]
 
