@@ -10,6 +10,11 @@ routes = [
         method : 'GET',
         path : '/books/{id_buku?}',
         handler : controller.tampil_semua
+    },
+    {
+        method : 'PUT',
+        path : '/books/{id_buku}',
+        handler : controller.ubah_buku
     }
 ]
 

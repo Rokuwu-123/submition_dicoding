@@ -1,68 +1,57 @@
-let models = require('../models/models')
-let libraries = require('../libraries/libraries')
-require('dotenv').config();
+let models = require("../models/models")
+let libraries = require("../libraries/libraries")
+require("dotenv").config();
 
 controller = {
     simpan_buku : async(request,h)=>{
-        let respons_data = '';
+        let respons_data = "";
         let respons_code = 0;
         
         try {
     
-           if (typeof request.payload.name == 'undefined' || request.payload.name == '') {
-               let err = {};
-               err.code = 400;
-               err.message = "Gagal menambahkan buku. Mohon isi nama buku";
-               throw err;
-           };
+            await libraries.validasi_ubah(request.payload)
     
-           if (request.payload.readPage > request.payload.pageCount){
-            let err = {};
-            err.code = 400;
-            err.message = "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount";
-            throw err;
-           };
+            let data_baru = await models.simpan_baru(request.payload);
     
-           let data_baru = await models.simpan_baru(request.payload);
+            let database = JSON.parse(process.env.DATA)
+            database.push(data_baru)
+            process.env.DATA = JSON.stringify(database)
     
-           let database = JSON.parse(process.env.DATA)
-           database.push(data_baru)
-           process.env.DATA = JSON.stringify(database)
-    
-           respons_data = {
+            respons_data = {
                 "status": "success",
                 "message": "Buku berhasil ditambahkan",
                 "data": {
                     "bookId": data_baru.id
                 }
-            }
-           respons_code = 201
+            };
+            respons_code = 201
             
         } catch (error) {
-            let error_message = "Buku gagal ditambahkan";
+            let error_respons = {
+                "status" : "error",
+                "message" : "Buku gagal ditambahkan"
+            };
             let error_code = 500;
     
             if( error.code != 500){
-                error_message  = error.message;
+                error_respons  = error.respons;
                 error_code = error.code;
             };
     
-            respons_data = {
-                "status" : "error",
-                "message" : error_message
-            };
+            respons_data = error_respons
             respons_code = error_code;
-        }
+        };
+
         return h.response(respons_data).code(respons_code);
     },
-    
+
     tampil_semua : async(request,h)=>{
-        let respons_data = '';
+        let respons_data = "";
         let respons_code = 0;
         
         try {
     
-            let data_buku = ''
+            let data_buku = "";
             
             if(await libraries.hitung_object(request.params) == 0){
     
@@ -73,40 +62,140 @@ controller = {
                 data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
     
                 if (await libraries.hitung_object(data_buku) == 0) {
-                    err = {}
-                    err.code = 404
-                    err.message = "Buku tidak ditemukan"
-                    throw err
+                    err = {};
+                    err.code = 404;
+                    err.respons = {
+                        status : "fail",
+                        message : "Buku tidak ditemukan"
+                    };
+                    throw err;
                 }
-            }
+            };
+
             respons_data = {
                 "status": "success",
                 "data": {
                     "books": data_buku
                 }
-            }
-            respons_code = 200
+            };
+
+            respons_code = 200;
             
         } catch (error) {
-            let error_message = "Buku gagal ditambahkan";
+            let error_message = {
+                "status" : "error",
+                "message" : "Buku gagal ditampilkan"
+            };
             let error_code = 500;
             
-            if( error.code != 500 && typeof error.code != 'undefined'){
-                error_message  = error.message;
+            if( error.code != 500){
+                error_respons  = error.respons;
                 error_code = error.code;
             };
     
-            respons_data = {
-                "status" : "error",
-                "message" : error_message
-            };
+            respons_data = error_respons
             respons_code = error_code;
-        }
+        };
+
         return h.response(respons_data).code(respons_code);
         
     },
-    ubah_buku : '',
-    hapus_buku : ''
-}
+
+    ubah_buku : async(request, h)=>{
+        let respons_code = '';
+        let respons_data = '';
+
+        try {
+
+            await libraries.validasi_ubah(request.payload)
+            
+            data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
+    
+            if (await libraries.hitung_object(data_buku) == 0) {
+                err = {};
+                err.code = 404;
+                err.respons = {
+                    status : "fail",
+                    message : "Gagal memperbarui buku. Id tidak ditemukan"
+                };
+                throw err;
+            };
+
+            hasil_ubah = await models.ubah_buku(JSON.parse(process.env.DATA));
+
+            process.env.DATA = JSON.stringify(hasil_ubah);
+
+            respons_data = {
+                "status" : "success",
+                "message" : "Buku berhasil diperbarui"
+            };
+
+            respons_code = 200;
+
+        } catch (error) {
+            let error_message = {
+                "status" : "error",
+                "message" : "Buku gagal diubah"
+            };
+            let error_code = 500;
+            
+            if( error.code != 500){
+                error_respons  = error.respons;
+                error_code = error.code;
+            };
+    
+            respons_data = error_respons;
+            respons_code = error_code;
+        };
+        return h.response(respons_data).code(respons_code);
+    },
+
+    hapus_buku : async(request, h)=>{
+        let respons_code = '';
+        let respons_data = '';
+
+        try {
+
+            data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
+    
+            if (await libraries.hitung_object(data_buku) == 0) {
+                err = {};
+                err.code = 404;
+                err.respons = {
+                    status : "fail",
+                    message : "Buku gagal dihapus. Id tidak ditemukan"
+                };
+                throw err;
+            };
+
+            hasil_hapus = await models.hapus_buku(JSON.parse(process.env.DATA),request.params);
+
+            process.env.DATA = JSON.stringify(hasil_hapus); 
+            
+            respons_data = {
+                "status" : "success",
+                "message" : "Buku berhasil dihapus"
+            };
+
+            respons_code = 200;
+            
+        } catch (error) {
+            let error_message = {
+                "status" : "error",
+                "message" : "Buku gagal dihapus"
+            };
+            let error_code = 500;
+            
+            if( error.code != 500){
+                error_respons  = error.respons;
+                error_code = error.code;
+            };
+    
+            respons_data = error_respons;
+            respons_code = error_code;
+        };
+        return h.response(respons_data).code(respons_code);
+    }
+};
 
 module.exports = controller;

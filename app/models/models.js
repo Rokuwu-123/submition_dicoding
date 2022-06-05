@@ -33,13 +33,45 @@ models = {
             data_kembali.push(vdata_buku)
         });
     
-        return data_kembali
+        return data_kembali;
     },
     
-    detail_buku :async(daftar_buku,parameter)=>{
-        let detail_data = daftar_buku.find(data=> data.id == parameter.id_buku)
-    
-        return detail_data
+    detail_buku : async(daftar_buku,parameter)=>{
+
+        return daftar_buku.find(data=> data.id == parameter.id_buku);
+
+    },
+
+    ubah_buku : async(daftar_buku,parameter,body)=>{
+
+        daftar_buku.find((data, index)=>{
+            if(data.id == parameter.id_buku){
+                daftar_buku[index].name = body.name;
+                daftar_buku[index].year = body.year;
+                daftar_buku[index].author = body.author;
+                daftar_buku[index].summary = body.summary;
+                daftar_buku[index].publisher = body.publisher;
+                daftar_buku[index].pageCount = body.pageCount;
+                daftar_buku[index].readPage = body.readPage;
+                daftar_buku[index].reading = body.reading;
+                daftar_buku[index].finished = body.readPage == body.pageCount ? true : false,
+                daftar_buku[index].updatedAt = new Date().toISOString();
+            };
+        });
+
+        return daftar_buku;
+    },
+
+    hapus_buku : async(daftar_buku,parameter)=>{
+
+        daftar_buku.find((data, index)=>{
+            if(data.id == parameter.id_buku){
+                delete daftar_buku[index]
+            }
+        });
+
+        return daftar_buku;
+
     }
 };
 
