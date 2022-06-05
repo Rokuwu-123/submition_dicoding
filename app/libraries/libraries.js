@@ -28,7 +28,9 @@ libraries = {
             };
             throw err;
         };
-    }
+    },
+
+    
 };
 
 module.exports = libraries;

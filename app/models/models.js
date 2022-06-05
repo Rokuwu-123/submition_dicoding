@@ -1,9 +1,12 @@
 const { nanoid } = require('nanoid');
+require("dotenv").config();
+
+let daftar_buku = JSON.parse(process.env.DATA);
 
 models = {
     simpan_baru : async(data_request)=>{
 
-        return {
+        let data_baru = {
             "id": nanoid(),
             "name": data_request.name,
             "year": data_request.year,
@@ -17,32 +20,35 @@ models = {
             "insertedAt": new Date().toISOString(),
             "updatedAt": new Date().toISOString()
         };
+
+        daftar_buku.push(data_baru);
+        process.env.DATA = JSON.stringify(daftar_buku);
+        
+        return data_baru;
     },
 
-    data_buku : async(daftar_buku)=>{
+    data_buku : async()=>{
 
         let data_kembali = [];
     
         daftar_buku.forEach(data => {
-            vdata_buku = {
+            data_kembali.push({
                 id : data.id,
                 name : data.name,
                 publisher : data.publisher
-            };
-    
-            data_kembali.push(vdata_buku);
+            });
         });
     
         return data_kembali;
     },
     
-    detail_buku : async(daftar_buku,parameter)=>{
+    detail_buku : async(parameter)=>{
 
         return daftar_buku.find(data=> data.id == parameter.id_buku);
 
     },
 
-    ubah_buku : async(daftar_buku,parameter,body)=>{
+    ubah_buku : async(parameter,body)=>{
 
         daftar_buku.find((data, index)=>{
             if(data.id == parameter.id_buku){
@@ -59,10 +65,10 @@ models = {
             };
         });
 
-        return daftar_buku;
+        process.env.DATA = JSON.stringify(daftar_buku);
     },
 
-    hapus_buku : async(daftar_buku,parameter)=>{
+    hapus_buku : async(parameter)=>{
 
         daftar_buku.find((data, index)=>{
             if(data.id == parameter.id_buku){
@@ -70,8 +76,102 @@ models = {
             };
         });
 
-        return daftar_buku;
+        process.env.DATA = JSON.stringify(daftar_buku);
+    },
 
+    cari_nama : async(nama)=>{
+
+        data_kembali = [];
+
+        daftar_buku.find((data, index)=>{
+            if(data.name == nama){
+                data_kembali.push({
+                    id : daftar_buku[index].id,
+                    name : daftar_buku[index].name,
+                    publisher : daftar_buku[index].publisher
+                });
+            };
+        });
+
+        return data_kembali;
+    },
+
+    cari_reading : async(nilai_reading)=>{
+        data_kembali = [];
+
+        daftar_buku.find((data, index)=>{
+            switch (nilai_reading) {
+                case 0:
+                    if(!data.reading){
+                        data_kembali.push({
+                            id : daftar_buku[index].id,
+                            name : daftar_buku[index].name,
+                            publisher : daftar_buku[index].publisher
+                        });
+                    };
+                    break;
+                
+                case 1:
+                    if(data.reading){
+                        data_kembali.push({
+                            id : daftar_buku[index].id,
+                            name : daftar_buku[index].name,
+                            publisher : daftar_buku[index].publisher
+                        });
+                    };
+            
+                default:
+                    err = {};
+                    err.code = 400;
+                    err.respons = {
+                        status : "fail",
+                        message : "Nilai reading tidak valid"
+                    };
+                    throw err;
+            };
+            
+        });
+
+        return data_kembali;
+    },
+
+    cari_finished : async(nilai_finished)=>{
+        data_kembali = [];
+
+        daftar_buku.find((data, index)=>{
+            switch (nilai_finished) {
+                case 0:
+                    if(!data.finished){
+                        data_kembali.push({
+                            id : daftar_buku[index].id,
+                            name : daftar_buku[index].name,
+                            publisher : daftar_buku[index].publisher
+                        });
+                    };
+                    break;
+                
+                case 1:
+                    if(data.finished){
+                        data_kembali.push({
+                            id : daftar_buku[index].id,
+                            name : daftar_buku[index].name,
+                            publisher : daftar_buku[index].publisher
+                        });
+                    };
+            
+                default:
+                    err = {};
+                    err.code = 400;
+                    err.respons = {
+                        status : "fail",
+                        message : "Nilai finished tidak valid"
+                    };
+                    throw err;
+            };
+            
+        });
+
+        return data_kembali;
     }
 };
 

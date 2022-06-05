@@ -13,10 +13,6 @@ controller = {
     
             let data_baru = await models.simpan_baru(request.payload);
     
-            let database = JSON.parse(process.env.DATA)
-            database.push(data_baru)
-            process.env.DATA = JSON.stringify(database)
-    
             respons_data = {
                 "status": "success",
                 "message": "Buku berhasil ditambahkan",
@@ -55,11 +51,11 @@ controller = {
             
             if(await libraries.hitung_object(request.params) == 0){
     
-                data_buku = await models.data_buku(JSON.parse(process.env.DATA));
+                data_buku = await models.data_buku();
                 
             } else{
     
-                data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
+                data_buku = await models.detail_buku(request.params);
     
                 if (await libraries.hitung_object(data_buku) == 0) {
                     err = {};
@@ -71,6 +67,23 @@ controller = {
                     throw err;
                 };
             };
+
+            if(await libraries.hitung_object(request.query) > 0){
+                
+                if(request.query.name != '' || typeof request.query.name != 'undefined'){
+
+                    data_buku = await models.cari_nama(request.query.name);
+
+                }else if(typeof request.query.reading != 'undefined'){
+
+                    data_buku = await models.cari_nama(request.query.reading);
+
+                }else if(typeof request.query.finished != 'undefined'){
+
+                    data_buku = await models.cari_nama(request.query.finished);
+
+                };
+            }
 
             respons_data = {
                 "status": "success",
@@ -102,14 +115,14 @@ controller = {
     },
 
     ubah_buku : async(request, h)=>{
-        let respons_code = '';
-        let respons_data = '';
+        let respons_code = "";
+        let respons_data = "";
 
         try {
 
             await libraries.validasi_ubah(request.payload);
             
-            data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
+            data_buku = await models.detail_buku(request.params);
     
             if (await libraries.hitung_object(data_buku) == 0) {
                 err = {};
@@ -121,9 +134,7 @@ controller = {
                 throw err;
             };
 
-            hasil_ubah = await models.ubah_buku(JSON.parse(process.env.DATA));
-
-            process.env.DATA = JSON.stringify(hasil_ubah);
+            await models.ubah_buku(request.payload);
 
             respons_data = {
                 "status" : "success",
@@ -156,7 +167,7 @@ controller = {
 
         try {
 
-            data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
+            data_buku = await models.detail_buku(request.params);
     
             if (await libraries.hitung_object(data_buku) == 0) {
                 err = {};
@@ -168,9 +179,7 @@ controller = {
                 throw err;
             };
 
-            hasil_hapus = await models.hapus_buku(JSON.parse(process.env.DATA),request.params);
-
-            process.env.DATA = JSON.stringify(hasil_hapus); 
+            await models.hapus_buku(request.params);
             
             respons_data = {
                 "status" : "success",
