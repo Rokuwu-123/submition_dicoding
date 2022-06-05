@@ -54,7 +54,7 @@ models = {
                 daftar_buku[index].pageCount = body.pageCount;
                 daftar_buku[index].readPage = body.readPage;
                 daftar_buku[index].reading = body.reading;
-                daftar_buku[index].finished = body.readPage == body.pageCount ? true : false,
+                daftar_buku[index].finished = body.readPage == body.pageCount ? true : false;
                 daftar_buku[index].updatedAt = new Date().toISOString();
             };
         });
@@ -66,7 +66,7 @@ models = {
 
         daftar_buku.find((data, index)=>{
             if(data.id == parameter.id_buku){
-                delete daftar_buku[index]
+                delete daftar_buku[index];
             };
         });
 

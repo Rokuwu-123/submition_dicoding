@@ -1,5 +1,5 @@
-let models = require("../models/models")
-let libraries = require("../libraries/libraries")
+let models = require("../models/models");
+let libraries = require("../libraries/libraries");
 require("dotenv").config();
 
 controller = {
@@ -24,7 +24,7 @@ controller = {
                     "bookId": data_baru.id
                 }
             };
-            respons_code = 201
+            respons_code = 201;
             
         } catch (error) {
             let error_respons = {
@@ -38,7 +38,7 @@ controller = {
                 error_code = error.code;
             };
     
-            respons_data = error_respons
+            respons_data = error_respons;
             respons_code = error_code;
         };
 
@@ -69,7 +69,7 @@ controller = {
                         message : "Buku tidak ditemukan"
                     };
                     throw err;
-                }
+                };
             };
 
             respons_data = {
@@ -107,7 +107,7 @@ controller = {
 
         try {
 
-            await libraries.validasi_ubah(request.payload)
+            await libraries.validasi_ubah(request.payload);
             
             data_buku = await models.detail_buku(JSON.parse(process.env.DATA),request.params);
     
