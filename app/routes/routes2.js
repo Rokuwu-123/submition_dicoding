@@ -2,13 +2,6 @@ let controller = require('../controllers/handlers');
 
 routes = [
     {
-        method : 'GET',
-        path : '/test',
-        handler : (request,h)=>{
-            return 'berhasil'
-        }
-    },
-    {
         method : 'POST',
         path : '/books',
         handler : controller.simpan_buku
@@ -22,6 +15,13 @@ routes = [
         method : 'PUT',
         path : '/books/{id_buku}',
         handler : controller.ubah_buku
+    },
+    {
+        method : 'GET',
+        path : '/test',
+        handler : (request,h)=>{
+            return h.response('respons_data')
+        }
     },
     {
         method : 'DELETE',
